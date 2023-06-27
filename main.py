@@ -8,7 +8,7 @@ pygame.init()
 # Definindo as dimensões da tela
 largura = 1070
 altura = 720
-icon_path = "assets/space.ico"
+icon_path = "assets/icon.png"
 background_image_path = "assets/sky.jpg"
 background_music_path = "assets/music.mp3"
 marcacoes_file_path = ""
@@ -25,27 +25,29 @@ root.withdraw()
 
 # Carregamento das marcações
 marcacoes = []
-icon_path = "assets/icon.jpg"
+icon_path = "assets/icon.png"
 
 # Carregar a fonte para o texto
 font = pygame.font.Font(None, 20)
 
 def click_handler(pos):
-    item = simpledialog.askstring("Space", "Nome da estrela:")
-    if item is None:
-        item = "desconhecido_" + str(pos)
+    # Verificar se o clique ocorre na parte superior da tela
+    if pos[1] < altura - altura // 5:
+        item = simpledialog.askstring("Space", "Nome da estrela:")
+        if item is None:
+            item = "desconhecido_" + str(pos)
 
-    # Marcando nome da estrela e posição
-    marca = {
-        "nome": item,
-        "posicao": pos
-    }
+        # Marcando nome da estrela e posição
+        marca = {
+            "nome": item,
+            "posicao": pos
+        }
 
-    # Marcando a lista de marcações
-    marcacoes.append(marca)
+        # Marcando a lista de marcações
+        marcacoes.append(marca)
 
-    print("Nome da estrela:", item)
-    print("Posição:", pos)
+        print("Nome da estrela:", item)
+        print("Posição:", pos)
 
 def save_marks():
     with open(marcacoes_file_path, "w") as file:
@@ -149,23 +151,23 @@ while running:
 
         text = font.render(marca["nome"], True, (255, 255, 255))
         text_rect = text.get_rect()
-        text_rect.topright = (posicao[0] + 10, posicao[1])
+        text_rect.topleft = (posicao[0] + 10, posicao[1])
         screen.blit(text, text_rect)
 
-    # Exibir o texto no canto superior direito
-    text_save = font.render("Pressione F10 para salvar os pontos", True, (255, 255, 255))
+    #Texto no canto superior esquerdo
+    text_save = font.render("Pressione F10 para salvar os pontos", True, (9, 209, 227))
     text_save_rect = text_save.get_rect()
-    text_save_rect.topright = (largura - 10, 10)
+    text_save_rect.topleft = (10, 10)
     screen.blit(text_save, text_save_rect)
 
-    text_load = font.render("Pressione F11 para carregar os pontos", True, (255, 255, 255))
+    text_load = font.render("Pressione F11 para carregar os pontos", True, (9, 209, 227))
     text_load_rect = text_load.get_rect()
-    text_load_rect.topright = (largura - 10, 35)
+    text_load_rect.topleft = (10, 35)
     screen.blit(text_load, text_load_rect)
 
-    text_delete = font.render("Pressione F12 para deletar os pontos", True, (255, 255, 255))
+    text_delete = font.render("Pressione F12 para deletar os pontos", True, (9, 209, 227))
     text_delete_rect = text_delete.get_rect()
-    text_delete_rect.topright = (largura - 10, 60)
+    text_delete_rect.topleft = (10, 60)
     screen.blit(text_delete, text_delete_rect)
 
     pygame.display.flip()
