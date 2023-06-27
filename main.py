@@ -8,10 +8,10 @@ pygame.init()
 # Definindo as dimensões da tela
 largura = 1070
 altura = 720
-icon_path = "assets/icon.png"
-background_image_path = "assets/sky.jpg"
-background_music_path = "assets/music.mp3"
-marcacoes_file_path = ""
+caminho_icone = "assets/icon.png"
+caminho_imagem_fundo = "assets/sky.jpg"
+caminho_musica_fundo = "assets/music.mp3"
+caminho_arquivo_marcacoes = "marcacoes_salvas.txt"
 tela = pygame.display.set_mode((largura, altura))
 
 # Iniciando a janela do pygame
@@ -19,57 +19,57 @@ pygame.display.set_caption("Space Maker")
 screen = pygame.display.set_mode((largura, altura))
 clock = pygame.time.Clock()
 
-# Iniciação da janela do tkinter para diálogo
+# Iniciando a janela do tkinter para diálogos
 root = tk.Tk()
 root.withdraw()
 
 # Carregamento das marcações
 marcacoes = []
-icon_path = "assets/icon.png"
+caminho_icone = "assets/icon.png"
 
 # Carregar a fonte para o texto
-font = pygame.font.Font(None, 20)
+fonte = pygame.font.Font(None, 20)
 
-def click_handler(pos):
+def manipular_clique(pos):
     # Verificar se o clique ocorre na parte superior da tela
     if pos[1] < altura - altura // 5:
         item = simpledialog.askstring("Space", "Nome da estrela:")
         if item is None:
             item = "desconhecido_" + str(pos)
 
-        # Marcando nome da estrela e posição
+        # Marcar o nome da estrela e a posição
         marca = {
             "nome": item,
             "posicao": pos
         }
 
-        # Marcando a lista de marcações
+        # Adicionar a marcação à lista de marcações
         marcacoes.append(marca)
 
         print("Nome da estrela:", item)
         print("Posição:", pos)
 
-def save_marks():
-    with open(marcacoes_file_path, "w") as file:
+def salvar_marcacoes():
+    with open(caminho_arquivo_marcacoes, "w") as arquivo:
         for marca in marcacoes:
             nome = marca["nome"]
             posicao = marca["posicao"]
-            line = f"{nome},{posicao[0]},{posicao[1]}\n"
-            file.write(line)
+            linha = f"{nome},{posicao[0]},{posicao[1]}\n"
+            arquivo.write(linha)
 
     print("Marcações salvas com sucesso!")
 
-def load_marks():
+def carregar_marcacoes():
     marcacoes.clear()
     try:
-        with open(marcacoes_file_path, "r") as file:
-            for line in file:
-                line = line.strip()
-                if line:
-                    data = line.split(",")
-                    if len(data) == 3:
-                        nome = data[0]
-                        posicao = (int(data[1]), int(data[2]))
+        with open(caminho_arquivo_marcacoes, "r") as arquivo:
+            for linha in arquivo:
+                linha = linha.strip()
+                if linha:
+                    dados = linha.split(",")
+                    if len(dados) == 3:
+                        nome = dados[0]
+                        posicao = (int(dados[1]), int(dados[2]))
                         marca = {
                             "nome": nome,
                             "posicao": posicao
@@ -80,54 +80,54 @@ def load_marks():
     except FileNotFoundError:
         print("Nenhum arquivo de marcações encontrado.")
 
-def delete_marks():
+def deletar_marcacoes():
     marcacoes.clear()
     print("Todas as marcações foram excluídas!")
 
-def on_closing():
-    save_marks()
+def ao_fechar():
+    salvar_marcacoes()
     pygame.quit()
     root.destroy()
 
-# Carregar ícone de aplicação
-icon = pygame.image.load(icon_path)
-pygame.display.set_icon(icon)
+# Carregar ícone do aplicativo
+icone = pygame.image.load(caminho_icone)
+pygame.display.set_icon(icone)
 
-# Carregar imagem de background
-background_image = pygame.image.load(background_image_path)
+# Carregar imagem de fundo
+imagem_fundo = pygame.image.load(caminho_imagem_fundo)
 
 # Configurar música de fundo em looping
-pygame.mixer.music.load(background_music_path)
+pygame.mixer.music.load(caminho_musica_fundo)
 pygame.mixer.music.play(-1)
 
 # Função para calcular a distância entre duas coordenadas
-def calculate_distance(pos1, pos2):
+def calcular_distancia(pos1, pos2):
     x1, y1 = pos1
     x2, y2 = pos2
-    distance = math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2)
-    return distance
+    distancia = math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2)
+    return distancia
 
-running = True
-while running:
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            running = False
-        elif event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_ESCAPE:
-                on_closing()
-            elif event.key == pygame.K_F10:
-                save_marks()
-            elif event.key == pygame.K_F11:
-                load_marks()
-            elif event.key == pygame.K_F12:
-                delete_marks()
+executando = True
+while executando:
+    for evento in pygame.event.get():
+        if evento.type == pygame.QUIT:
+            executando = False
+        elif evento.type == pygame.KEYDOWN:
+            if evento.key == pygame.K_ESCAPE:
+                ao_fechar()
+            elif evento.key == pygame.K_F10:
+                salvar_marcacoes()
+            elif evento.key == pygame.K_F11:
+                carregar_marcacoes()
+            elif evento.key == pygame.K_F12:
+                deletar_marcacoes()
 
-        elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+        elif evento.type == pygame.MOUSEBUTTONDOWN and evento.button == 1:
             pos = pygame.mouse.get_pos()
-            click_handler(pos)
+            manipular_clique(pos)
 
-    # Desenhar o background
-    screen.blit(background_image, (0, 0))
+    # Desenhar o fundo
+    screen.blit(imagem_fundo, (0, 0))
 
     # Desenhar as marcações existentes
     for i, marca in enumerate(marcacoes):
@@ -140,38 +140,38 @@ while running:
             pygame.draw.line(screen, (255, 255, 255), posicao_anterior, posicao)
 
             # Calcular distância entre as coordenadas
-            distance = calculate_distance(posicao, posicao_anterior)
+            distancia = calcular_distancia(posicao, posicao_anterior)
 
             # Exibir a distância como texto sobre a linha
-            text_distance = font.render(f"Distância: {distance:.2f}", True, (255, 255, 255))
-            text_distance_rect = text_distance.get_rect()
-            text_distance_rect.center = (
+            texto_distancia = fonte.render(f"Distância: {distancia:.2f}", True, (255, 255, 255))
+            retangulo_texto_distancia = texto_distancia.get_rect()
+            retangulo_texto_distancia.center = (
             (posicao[0] + posicao_anterior[0]) // 2, (posicao[1] + posicao_anterior[1]) // 2)
-            screen.blit(text_distance, text_distance_rect)
+            screen.blit(texto_distancia, retangulo_texto_distancia)
 
-        text = font.render(marca["nome"], True, (255, 255, 255))
-        text_rect = text.get_rect()
-        text_rect.topleft = (posicao[0] + 10, posicao[1])
-        screen.blit(text, text_rect)
+        texto = fonte.render(marca["nome"], True, (255, 255, 255))
+        retangulo_texto = texto.get_rect()
+        retangulo_texto.topleft = (posicao[0] + 10, posicao[1])
+        screen.blit(texto, retangulo_texto)
 
-    #Texto no canto superior esquerdo
-    text_save = font.render("Pressione F10 para salvar os pontos", True, (9, 209, 227))
-    text_save_rect = text_save.get_rect()
-    text_save_rect.topleft = (10, 10)
-    screen.blit(text_save, text_save_rect)
+    # Exibir texto no canto superior esquerdo
+    texto_salvar = fonte.render("Pressione F10 para salvar os pontos", True, (9, 209, 227))
+    retangulo_texto_salvar = texto_salvar.get_rect()
+    retangulo_texto_salvar.topleft = (10, 10)
+    screen.blit(texto_salvar, retangulo_texto_salvar)
 
-    text_load = font.render("Pressione F11 para carregar os pontos", True, (9, 209, 227))
-    text_load_rect = text_load.get_rect()
-    text_load_rect.topleft = (10, 35)
-    screen.blit(text_load, text_load_rect)
+    texto_carregar = fonte.render("Pressione F11 para carregar os pontos", True, (9, 209, 227))
+    retangulo_texto_carregar = texto_carregar.get_rect()
+    retangulo_texto_carregar.topleft = (10, 35)
+    screen.blit(texto_carregar, retangulo_texto_carregar)
 
-    text_delete = font.render("Pressione F12 para deletar os pontos", True, (9, 209, 227))
-    text_delete_rect = text_delete.get_rect()
-    text_delete_rect.topleft = (10, 60)
-    screen.blit(text_delete, text_delete_rect)
+    texto_deletar = fonte.render("Pressione F12 para deletar os pontos", True, (9, 209, 227))
+    retangulo_texto_deletar = texto_deletar.get_rect()
+    retangulo_texto_deletar.topleft = (10, 60)
+    screen.blit(texto_deletar, retangulo_texto_deletar)
 
     pygame.display.flip()
     clock.tick(60)
 
-# Janela do tkinter não será exibida, mas é necessária para os diálogos
+# A janela do tkinter não será exibida, mas é necessária para os diálogos
 root.mainloop()
