@@ -28,3 +28,6 @@ O SPACE MARKER é uma solução que permite aos usuários marcar e nomear estrel
 
 ## Linha traçada para delimitar a area do céu e as montanhas 
 ![Logo](https://i.imgur.com/Cw4lRwt.png)
+
+## Link do jogo: 
+https://drive.google.com/file/d/1UdMDFWMGvra7dvI0UgtWQzBHblspiGne/view?usp=sharing
